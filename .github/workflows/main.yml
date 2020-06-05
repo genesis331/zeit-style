@@ -1,0 +1,32 @@
+name: Build Web
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup NodeJS
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+    - name: Setup Yarn
+      run: |
+        npm install
+        npm install -g yarn
+        yarn run build
+    - name: Publish Web
+      run: |
+        cd dist/
+        git init
+          git config --global user.email cheah3838@gmail.com
+          git config --global user.name genesis331
+          git status
+          git remote add origin https://${{secrets.ACCESS_TOKEN}}@github.com/genesis331/zeit-style.git
+          git checkout -b gh-pages
+          git add --all
+          git commit -m "Updated Content"
+          git push origin gh-pages -f
